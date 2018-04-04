@@ -13,7 +13,7 @@ sample_rate = int(sys.argv[2])
 if sample_rate == 1:
     opt_rate = 10
 else:
-    opt_rate = int(10/sample_rate)
+    opt_rate = 5
 
 if sys.argv[3] == 'run':
     debug = False
