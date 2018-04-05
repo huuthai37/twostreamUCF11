@@ -8,6 +8,7 @@ import pickle
 import random
 import numpy as np
 import config
+from sklearn.metrics import classification_report
 
 # train: python mobilenet_temporal.py train 1 32 1 101
 # test: python mobilenet_temporal.py test 1 32 1 101
@@ -163,9 +164,9 @@ if train:
                 history.history['loss']
             ])
         result_model.save_weights('weights/mobilenet_temporal{}_{}e.h5'.format(opt_size,old_epochs+1+e))
-    print histories
-    with open('data/trainHistoryTemporal{}_{}_{}e'.format(opt_size, old_epochs, epochs), 'wb') as file_pi:
-        pickle.dump(histories, file_pi)
+
+        with open('data/trainHistoryTemporal{}_{}_{}e'.format(opt_size, old_epochs, epochs), 'wb') as file_pi:
+            pickle.dump(histories, file_pi)
 
 else:
     result_model.load_weights('weights/mobilenet_temporal{}_{}e.h5'.format(opt_size,epochs))
@@ -178,16 +179,30 @@ else:
     print('-'*40)
     print 'Number samples: {}'.format(len_samples)
 
-    score = result_model.evaluate_generator(
+    # score = result_model.evaluate_generator(
+    #     gd.getTrainData(
+    #         keys,
+    #         batch_size,
+    #         classes,
+    #         2,
+    #         'test',
+    #         opt_size), 
+    #     max_queue_size=3, 
+    #     steps=len_samples/batch_size
+    # )
+    # print('Test loss:', score[0])
+    # print('Test accuracy:', score[1])
+
+    Y_test = gd.getClassData(keys)
+    y_pred = result_model.predict_generator(
         gd.getTrainData(
             keys,
             batch_size,
             classes,
             2,
-            'test',
+            'test', 
             opt_size), 
         max_queue_size=3, 
-        steps=len_samples/batch_size
-    )
-    print('Test loss:', score[0])
-    print('Test accuracy:', score[1])
+        steps=int(np.ceil(len_samples*1.0/batch_size)))
+    y_classes = y_pred.argmax(axis=-1)
+    print(classification_report(Y_test, y_classes))

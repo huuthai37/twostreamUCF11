@@ -8,6 +8,8 @@ from keras.callbacks import ModelCheckpoint, Callback
 import pickle
 import random
 import config
+import numpy as np 
+from sklearn.metrics import classification_report
 
 # train: python mobilenet_spatial2.py train 32 1 101
 # test: python mobilenet_spatial2.py test 32 1 101
@@ -53,30 +55,46 @@ if server:
     valid_path = '/home/oanhnt/thainh/data/rgb/valid'
     test_path = '/home/oanhnt/thainh/data/rgb/test'
 else:
-    train_path = '/mnt/data11/rgb/train'
-    valid_path = '/mnt/data11/rgb/valid'
-    test_path = '/mnt/data11/rgb/test'
+    train_path = '/mnt/smalldata/rgb/train'
+    valid_path = '/mnt/smalldata/rgb/valid'
+    test_path = '/mnt/smalldata/rgb/test'
 
-if train:
-    len_samples = 47710
-    train_batches = ImageDataGenerator(rescale=1./255).flow_from_directory(
-        train_path,
-        batch_size=batch_size,
-        target_size=(224, 224),
-    )
-    len_valid = 17712
-    valid_batches = ImageDataGenerator(rescale=1./255).flow_from_directory(
-        valid_path,
-        batch_size=batch_size,
-        target_size=(224, 224),
-    )
+if server:
+    if train:
+        len_samples = 47710
+        train_batches = ImageDataGenerator(rescale=1./255).flow_from_directory(
+            train_path,
+            batch_size=batch_size,
+            target_size=(224, 224),
+        )
+        len_valid = 17712
+        valid_batches = ImageDataGenerator(rescale=1./255).flow_from_directory(
+            valid_path,
+            batch_size=batch_size,
+            target_size=(224, 224),
+        )
+    else:
+        len_samples = 17498
+        test_batches = ImageDataGenerator(rescale=1./255).flow_from_directory(
+            test_path,
+            batch_size=batch_size,
+            target_size=(224, 224),
+        )
 else:
-    len_samples = 17498
-    test_batches = ImageDataGenerator(rescale=1./255).flow_from_directory(
-        test_path,
-        batch_size=batch_size,
-        target_size=(224, 224),
-    )
+    if train:
+        len_samples = 6922
+        train_batches = ImageDataGenerator(rescale=1./255).flow_from_directory(
+            train_path,
+            batch_size=batch_size,
+            target_size=(224, 224),
+        )
+    else:
+        len_samples = 2150
+        test_batches = ImageDataGenerator(rescale=1./255).flow_from_directory(
+            test_path,
+            batch_size=batch_size,
+            target_size=(224, 224),
+        )
 
 # MobileNet model
 if train & (not retrain):
@@ -112,15 +130,24 @@ if train:
     print('MobileNet RGB stream only: Training')
     print('-'*40)
     check_point = ModelCheckpoint('weights/mobilenet_spatial_{epoch}e.h5', verbose=1, save_weights_only=True)
-    result_model.fit_generator(
-        train_batches, 
-        verbose=1, 
-        callbacks=[plot_losses,check_point], 
-        max_queue_size=2, 
-        steps_per_epoch=len_samples/batch_size, 
-        epochs=epochs,
-        validation_data=valid_batches,
-        validation_steps=len_valid/batch_size)
+    if server:
+        result_model.fit_generator(
+            train_batches, 
+            verbose=1, 
+            callbacks=[plot_losses,check_point], 
+            max_queue_size=2, 
+            steps_per_epoch=len_samples/batch_size, 
+            epochs=epochs,
+            validation_data=valid_batches,
+            validation_steps=len_valid/batch_size)
+    else:
+        result_model.fit_generator(
+            train_batches, 
+            verbose=1, 
+            callbacks=[plot_losses,check_point], 
+            max_queue_size=2, 
+            steps_per_epoch=4, 
+            epochs=epochs)
 
 else:
     result_model.load_weights('weights/mobilenet_spatial_{}e.h5'.format(epochs))
@@ -130,6 +157,15 @@ else:
     print('-'*40)
 
     # random.shuffle(keys)
-    score = result_model.evaluate_generator(test_batches, max_queue_size=3, steps=len_samples/batch_size)
-    print('Test loss:', score[0])
-    print('Test accuracy:', score[1])
+    # score = result_model.evaluate_generator(test_batches, max_queue_size=3, steps=len_samples/batch_size)
+    # print('Test loss:', score[0])
+    # print('Test accuracy:', score[1])
+
+    Y_test = test_batches.classes
+    y_pred = result_model.predict_generator(
+        test_batches, 
+        max_queue_size=3, 
+        steps=int(np.ceil(len_samples*1.0/batch_size)),
+        verbose=1)
+    y_classes = y_pred.argmax(axis=-1)
+    print(classification_report(Y_test, y_classes))

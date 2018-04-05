@@ -8,6 +8,7 @@ import pickle
 import random
 import numpy as np
 import config
+from sklearn.metrics import classification_report
 
 # train: python mobilenet_twostream_late.py train 2 avg 32 5 11 10 15
 # test: python mobilenet_twostream_late.py test 2 avg 32 5 11
@@ -196,7 +197,21 @@ else:
     print('-'*40)
     print 'Number samples: {}'.format(len_samples)
 
-    score = result_model.evaluate_generator(
+    # score = result_model.evaluate_generator(
+    #     gd.getTrainData(
+    #         keys,
+    #         batch_size,
+    #         classes,
+    #         3,
+    #         'test', 
+    #         opt_size), 
+    #     max_queue_size=3, 
+    #     steps=len_samples/batch_size)
+    # print('Test loss:', score[0])
+    # print('Test accuracy:', score[1])
+
+    Y_test = gd.getClassData(keys)
+    y_pred = result_model.predict_generator(
         gd.getTrainData(
             keys,
             batch_size,
@@ -205,10 +220,6 @@ else:
             'test', 
             opt_size), 
         max_queue_size=3, 
-        steps=len_samples/batch_size)
-    print('Test loss:', score[0])
-    print('Test accuracy:', score[1])
-
-    Y_test = np.argmax(gd.getClassData(keys), axis=1) # Convert one-hot to index
-    y_pred = model.predict_classes(x_test)
-    print(classification_report(Y_test, y_pred))
+        steps=int(np.ceil(len_samples*1.0/batch_size)))
+    y_classes = y_pred.argmax(axis=-1)
+    print(classification_report(Y_test, y_classes))
