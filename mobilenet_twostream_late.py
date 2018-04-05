@@ -9,9 +9,9 @@ import random
 import numpy as np
 import config
 
-# train: python mobilenet_twostream_late.py train 1 avg 32 1 101 0 0
-# test: python mobilenet_twostream_late.py test 1 avg 32 1 101
-# retrain: python mobilenet_twostream_late.py retrain 1 avg 32 1 101 1
+# train: python mobilenet_twostream_late.py train 2 avg 32 5 11 10 15
+# test: python mobilenet_twostream_late.py test 2 avg 32 5 11
+# retrain: python mobilenet_twostream_late.py retrain 2 avg 32 5 11 5
 
 if sys.argv[1] == 'train':
     train = True
@@ -182,7 +182,7 @@ if train:
         result_model.save_weights('weights/mobilenet_twostream{}_late_{}_{}e.h5'.format(opt_size,fusion,old_epochs+1+e))
 
         if not retrain:
-            with open('data/trainHistoryTwoStream{}_{}_{}e'.format(opt_size, fusion, epochs), 'wb') as file_pi:
+            with open('data/trainHistoryTwoStreamLate{}_{}_{}e'.format(opt_size, fusion, epochs), 'wb') as file_pi:
                 pickle.dump(histories, file_pi)
 
 else:

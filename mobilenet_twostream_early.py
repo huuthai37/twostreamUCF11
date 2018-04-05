@@ -160,7 +160,7 @@ if train:
         result_model.save_weights('weights/mobilenet_twostream{}_early_{}_{}e.h5'.format(opt_size,fusion,old_epochs+1+e))
 
         if not retrain:
-            with open('data/trainHistoryTwoStream{}_{}_{}e'.format(opt_size, fusion, epochs), 'wb') as file_pi:
+            with open('data/trainHistoryTwoStreamEarly{}_{}_{}e'.format(opt_size, fusion, epochs), 'wb') as file_pi:
                 pickle.dump(histories, file_pi)
 
 else:
