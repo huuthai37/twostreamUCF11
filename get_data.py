@@ -106,14 +106,13 @@ def stackOpticalFlowRGB(chunk,data_folder_opt,data_folder_rgb,opt_size):
 
         # Stack RGB
         rgb = cv2.imread(data_folder_rgb + folder_opt + '-' + str(start_rgb) + '.jpg')
-        # resize_rgb = cv2.resize(rgb, (224, 224))
-        resize_rgb = resize_rgb.astype('float16',copy=False)
-        resize_rgb/=255
+        # rgb = cv2.resize(rgb, (224, 224))
+        rgb = rgb.astype('float16',copy=False)
+        rgb/=255
 
         # Stack optical flow
         for i in range(start_opt, start_opt + 20):
             img = cv2.imread(data_folder_opt + folder_opt  + '/' +  str(i) + '.jpg', 0)
-#             print img.shape
             height, width = img.shape
             crop_pos = int((width-height)/2)
             img = img[:,crop_pos:crop_pos+height]
@@ -125,7 +124,7 @@ def stackOpticalFlowRGB(chunk,data_folder_opt,data_folder_rgb,opt_size):
         nstack/=255
         
         # Stack chunk
-        stack_rgb.append(resize_rgb)
+        stack_rgb.append(rgb)
         stack_opt.append(nstack)
 
     return [np.array(stack_rgb), np.array(stack_opt)], labels
