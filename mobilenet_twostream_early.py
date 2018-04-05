@@ -58,11 +58,11 @@ x = mobilenet.mobilenet_by_me(
     weight='weights/mobilenet_spatial_{}e.h5'.format(spa_epochs))
 
 # Temporal
-input_y = Input(shape=input_shape)
+input_y = Input(shape=(224,224,20))
 y = mobilenet.mobilenet_by_me(
     name='temporal', 
     inputs=input_y, 
-    input_shape=(224,224,depth), 
+    input_shape=(224,224,20), 
     classes=classes,
     weight='weights/mobilenet_temporal{}_{}e.h5'.format(opt_size,tem_epochs))
 
