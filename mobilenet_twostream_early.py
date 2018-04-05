@@ -124,7 +124,7 @@ if train:
                 steps_per_epoch=len_samples/batch_size, 
                 epochs=1,
                 validation_data=gd.getTrainData(
-                    keys,
+                    keys_valid,
                     batch_size,
                     classes,
                     3,

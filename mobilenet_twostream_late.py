@@ -146,7 +146,7 @@ if train:
                 steps_per_epoch=len_samples/batch_size, 
                 epochs=1,
                 validation_data=gd.getTrainData(
-                    keys,
+                    keys_valid,
                     batch_size,
                     classes,
                     3,
@@ -208,3 +208,7 @@ else:
         steps=len_samples/batch_size)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
+
+    Y_test = np.argmax(gd.getClassData(keys), axis=1) # Convert one-hot to index
+    y_pred = model.predict_classes(x_test)
+    print(classification_report(Y_test, y_pred))
