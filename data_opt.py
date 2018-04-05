@@ -8,6 +8,14 @@ import config
 
 # data_opt.py train 1 run
 
+def warp_flow(img, flow):
+    h, w = flow.shape[:2]
+    flow = -flow
+    flow[:,:,0] += np.arange(w)
+    flow[:,:,1] += np.arange(h)[:,np.newaxis]
+    res = cv2.remap(img, flow, None, cv2.INTER_LINEAR)
+    return res
+
 train = sys.argv[1]
 sample_rate = int(sys.argv[2])
 if sample_rate == 1:
@@ -47,10 +55,17 @@ with open(class_file) as f0:
 
 # Khoi tao tinh optical flow bang Dual TVL1
 c = 0
-optical_flow = cv2.DualTVL1OpticalFlow_create()
+# optical_flow = cv2.DualTVL1OpticalFlow_create()
+inst = cv2.optflow.createOptFlow_DIS(cv2.optflow.DISOPTICAL_FLOW_PRESET_MEDIUM)
+inst.setUseSpatialPropagation(True)
+
+l = 0
 
 with open(text_file) as f1:
     for line in f1:
+        l += 1
+        if (l<531) :
+            continue
         # tao ten va folder anh
         if train == 'test':
             arr_line = line.rstrip() # return folder/subfolder/name.mpg
@@ -79,6 +94,7 @@ with open(text_file) as f1:
         prvs = cv2.cvtColor(frame1,cv2.COLOR_BGR2GRAY)
         k = 0
         m = 0
+        flow = None
         os.chdir(path + name_video)
         while(True):  
             # Capture frame-by-frame
@@ -94,8 +110,15 @@ with open(text_file) as f1:
                 if not debug:
                     next = cv2.cvtColor(frame2,cv2.COLOR_BGR2GRAY)
                     
-                    flow = optical_flow.calc(prvs, next, None)
+                    # flow = optical_flow.calc(prvs, next, None)
                     # flow = cv2.calcOpticalFlowFarneback(prvs,next, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+                    
+                    if flow is not None and use_temporal_propagation:
+                        #warp previous flow to get an initial approximation for the current flow:
+                        flow = inst.calc(prvs, next, warp_flow(flow,flow))
+                    else:
+                        flow = inst.calc(prvs, next, None)
+            
                     prvs = next
 
                     # Chuan hoa gia tri diem anh ve tu 0 den 255
