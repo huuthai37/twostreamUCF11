@@ -8,7 +8,7 @@ import config
 
 train = sys.argv[1]
 file = sys.argv[2]
-type_data = sys.argv[3]
+opt_size = int(sys.argv[3])
 server = config.server()
 
 if server:
