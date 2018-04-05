@@ -35,7 +35,7 @@ for i in range(length):
 		
 		height, width, channels = img.shape
 		if type_data == 'rgb':
-			if (img is None) | ((height != 224) && (width != 224)):
+			if (img is None) | ((height != 224) & (width != 224)):
 				print data[i]
 				print img.shape
 				break
