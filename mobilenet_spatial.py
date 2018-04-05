@@ -15,13 +15,19 @@ import config
 class PlotLearning(Callback):
     def on_train_begin(self, logs={}):
         # self.i = 0
-        self.logs = []
+        self.save = []
+
 
     def on_epoch_end(self, epoch, logs={}):
-        self.logs.append(logs)
+        self.save.append([
+            logs.get('acc'),
+            logs.get('val_acc'),
+            logs.get('loss'),
+            logs.get('val_loss')
+        ])
         # self.i+=1
         with open('data/trainHistorySpatial', 'wb') as file_pi:
-            pickle.dump(self.logs, file_pi)
+            pickle.dump(self.save, file_pi)
 
 plot_losses = PlotLearning()
 
@@ -65,7 +71,7 @@ if train:
         target_size=(224, 224),
     )
 else:
-    len_samples = 13188
+    len_samples = 17498
     test_batches = ImageDataGenerator(rescale=1./255).flow_from_directory(
         test_path,
         batch_size=batch_size,
