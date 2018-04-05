@@ -89,7 +89,6 @@ with open(text_file) as f1:
         prvs = cv2.cvtColor(frame1,cv2.COLOR_BGR2GRAY)
         k = 0
         m = 0
-        flow = None
         os.chdir(path + name_video)
         while(True):  
             # Capture frame-by-frame
@@ -107,12 +106,7 @@ with open(text_file) as f1:
                     
                     # flow = optical_flow.calc(prvs, next, None)
                     # flow = cv2.calcOpticalFlowFarneback(prvs,next, None, 0.5, 3, 15, 3, 5, 1.2, 0)
-                    
-                    if flow is not None:
-                        #warp previous flow to get an initial approximation for the current flow:
-                        flow = inst.calc(prvs, next, warp_flow(flow,flow))
-                    else:
-                        flow = inst.calc(prvs, next, None)
+                    flow = inst.calc(prvs, next, None)
             
                     prvs = next
 
