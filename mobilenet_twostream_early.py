@@ -9,6 +9,7 @@ import random
 import numpy as np
 import config
 from sklearn.metrics import classification_report
+import mobilenet
 
 # train: python mobilenet_twostream_early.py train 1 avg 32 1 101 0 0
 # test: python mobilenet_twostream_early.py test 1 avg 32 1 101
@@ -53,7 +54,8 @@ x = mobilenet.mobilenet_by_me(
     name='spatial', 
     inputs=input_x, 
     input_shape=(224,224,3), 
-    classes=classes)
+    classes=classes,
+    weight='weights/mobilenet_spatial_{}e.h5'.format(spa_epochs))
 
 # Temporal
 input_y = Input(shape=input_shape)
@@ -61,7 +63,8 @@ y = mobilenet.mobilenet_by_me(
     name='temporal', 
     inputs=input_y, 
     input_shape=(224,224,depth), 
-    classes=classes)
+    classes=classes,
+    weight='weights/mobilenet_temporal{}_{}e.h5'.format(opt_size,tem_epochs))
 
 # Fusion
 if fusion == 'avg':
