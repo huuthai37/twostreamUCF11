@@ -113,7 +113,7 @@ with open(text_file) as f1:
                     # flow = optical_flow.calc(prvs, next, None)
                     # flow = cv2.calcOpticalFlowFarneback(prvs,next, None, 0.5, 3, 15, 3, 5, 1.2, 0)
                     
-                    if flow is not None and use_temporal_propagation:
+                    if flow is not None:
                         #warp previous flow to get an initial approximation for the current flow:
                         flow = inst.calc(prvs, next, warp_flow(flow,flow))
                     else:
