@@ -42,6 +42,13 @@ def getTrainData(keys,batch_size,classes,mode,train,opt_size):
                 print 'Test batch {}'.format(i/batch_size+1)
             yield X_train, np.array(Y_train)
 
+def getClassData(keys):
+    labels = []
+    for opt in keys:
+        labels.append(opt[2])
+
+    return labels
+
 def stackRGB(chunk,data_folder_rgb):
     labels = []
     stack_rgb = []
@@ -108,6 +115,9 @@ def stackOpticalFlowRGB(chunk,data_folder_opt,data_folder_rgb,opt_size):
         rgb = cv2.imread(data_folder_rgb + folder_opt + '-' + str(start_rgb) + '.jpg')
         if not server:
             rgb = cv2.resize(rgb, (224, 224))
+        if rgb is None:
+            print opt
+            break
         rgb = rgb.astype('float16',copy=False)
         rgb/=255
 
