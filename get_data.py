@@ -106,7 +106,8 @@ def stackOpticalFlowRGB(chunk,data_folder_opt,data_folder_rgb,opt_size):
 
         # Stack RGB
         rgb = cv2.imread(data_folder_rgb + folder_opt + '-' + str(start_rgb) + '.jpg')
-        # rgb = cv2.resize(rgb, (224, 224))
+        if not server:
+            rgb = cv2.resize(rgb, (224, 224))
         rgb = rgb.astype('float16',copy=False)
         rgb/=255
 
