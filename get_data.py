@@ -99,14 +99,14 @@ def stackOpticalFlowRGB(chunk,data_folder_opt,data_folder_rgb,opt_size):
         arrays = []
 
         # RGB Frame
-        if (start_opt%20>0):
-            start_rgb = (int(np.floor(start_opt/20)) + 1 ) * 10 *opt_size
+        if (start_opt % 20 > 0):
+            start_rgb = (int(np.floor(start_opt * opt_size / 20)) + 1 ) * 10
         else:
             start_rgb = int(start_opt * opt_size / 2)
 
         # Stack RGB
         rgb = cv2.imread(data_folder_rgb + folder_opt + '-' + str(start_rgb) + '.jpg')
-        resize_rgb = cv2.resize(rgb, (224, 224))
+        # resize_rgb = cv2.resize(rgb, (224, 224))
         resize_rgb = resize_rgb.astype('float16',copy=False)
         resize_rgb/=255
 
