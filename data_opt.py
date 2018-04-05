@@ -59,13 +59,8 @@ c = 0
 inst = cv2.optflow.createOptFlow_DIS(cv2.optflow.DISOPTICAL_FLOW_PRESET_MEDIUM)
 inst.setUseSpatialPropagation(True)
 
-l = 0
-
 with open(text_file) as f1:
     for line in f1:
-        l += 1
-        if (l<531) :
-            continue
         # tao ten va folder anh
         if train == 'test':
             arr_line = line.rstrip() # return folder/subfolder/name.mpg
