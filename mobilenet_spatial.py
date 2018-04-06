@@ -157,15 +157,15 @@ else:
     print('-'*40)
 
     # random.shuffle(keys)
-    # score = result_model.evaluate_generator(test_batches, max_queue_size=3, steps=len_samples/batch_size)
-    # print('Test loss:', score[0])
-    # print('Test accuracy:', score[1])
+    score = result_model.evaluate_generator(test_batches, max_queue_size=3, steps=len_samples/batch_size)
+    print('Test loss:', score[0])
+    print('Test accuracy:', score[1])
 
-    Y_test = test_batches.classes
-    y_pred = result_model.predict_generator(
-        test_batches, 
-        max_queue_size=3, 
-        steps=int(np.ceil(len_samples*1.0/batch_size)),
-        verbose=1)
-    y_classes = y_pred.argmax(axis=-1)
-    print(classification_report(Y_test, y_classes))
+#     Y_test = test_batches.classes
+#     y_pred = result_model.predict_generator(
+#         test_batches, 
+#         max_queue_size=3, 
+#         steps=int(np.ceil(len_samples*1.0/batch_size)),
+#         verbose=1)
+#     y_classes = y_pred.argmax(axis=-1)
+#     print(classification_report(Y_test, y_classes))
