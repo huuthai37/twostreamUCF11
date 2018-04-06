@@ -4,6 +4,7 @@ import sys
 import random
 import numpy as np
 import config
+import pickle
 
 # data_rgb.py train 10 run 
 
