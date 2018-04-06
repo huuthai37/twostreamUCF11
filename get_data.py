@@ -52,16 +52,12 @@ def getClassData(keys):
 def stackRGB(chunk,data_folder_rgb):
     labels = []
     stack_rgb = []
-    for opt in chunk:
-        folder_opt = opt[0]
-        start_opt = opt[1]
-        labels.append(opt[2])
+    for rgb in chunk:
+        folder_rgb = rgb[0]
+        start_rgb = rgb[1]
+        labels.append(rgb[2])
 
-        if (start_opt%20>0):
-            start_rgb = (int(np.floor(start_opt/20)) + 1 ) * 10
-        else:
-            start_rgb = int(start_opt/2)
-        rgb = cv2.imread(data_folder_rgb + folder_opt + '-' + str(start_rgb) + '.jpg')
+        rgb = cv2.imread(data_folder_rgb + folder_rgb + '-' + str(start_rgb) + '.jpg')
         # resize_rgb = cv2.resize(rgb, (224, 224))
         resize_rgb = resize_rgb.astype('float16',copy=False)
         resize_rgb/=255
@@ -70,7 +66,7 @@ def stackRGB(chunk,data_folder_rgb):
 
     return (np.array(stack_rgb), labels)
 
-def stackOpticalFlow(chunk,data_folder,opt_size):
+def stackrOpticalFlow(chunk,data_folder,opt_size):
     labels = []
     stack_opt = []
     for opt in chunk:
