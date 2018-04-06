@@ -28,7 +28,8 @@ def mobilenet_by_me(name, inputs, input_shape, classes, weight = '', cut = 5):
 	x = Flatten()(x)
 	x = Dense(classes, activation='softmax')(x)
 	model2 = Model(inputs=new_input, outputs=x)
-	model2.load_weights(weight)
+	if weight != '':
+	    model2.load_weights(weight)
 
 	new_layers = [l for l in model2.layers]
 
