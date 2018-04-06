@@ -50,21 +50,35 @@ else:
 
 # Spatial
 input_x = Input(shape=(224,224,3))
-x = mobilenet.mobilenet_by_me(
-    name='spatial', 
-    inputs=input_x, 
-    input_shape=(224,224,3), 
-    classes=classes,
-    weight='weights/mobilenet_spatial_{}e.h5'.format(spa_epochs))
+if train:
+    x = mobilenet.mobilenet_by_me(
+        name='spatial', 
+        inputs=input_x, 
+        input_shape=(224,224,3), 
+        classes=classes,
+        weight='weights/mobilenet_spatial_{}e.h5'.format(spa_epochs))
+else:
+    x = mobilenet.mobilenet_by_me(
+        name='spatial', 
+        inputs=input_x, 
+        input_shape=(224,224,3), 
+        classes=classes)
 
 # Temporal
 input_y = Input(shape=(224,224,20))
-y = mobilenet.mobilenet_by_me(
+if train:
+    y = mobilenet.mobilenet_by_me(
+        name='temporal', 
+        inputs=input_y, 
+        input_shape=(224,224,20), 
+        classes=classes,
+        weight='weights/mobilenet_temporal{}_{}e.h5'.format(opt_size,tem_epochs))
+else:
+    y = mobilenet.mobilenet_by_me(
     name='temporal', 
     inputs=input_y, 
     input_shape=(224,224,20), 
-    classes=classes,
-    weight='weights/mobilenet_temporal{}_{}e.h5'.format(opt_size,tem_epochs))
+    classes=classes)
 
 # Fusion
 if fusion == 'avg':
