@@ -205,4 +205,4 @@ else:
         max_queue_size=3, 
         steps=int(np.ceil(len_samples*1.0/batch_size)))
     y_classes = y_pred.argmax(axis=-1)
-    print(classification_report(Y_test, y_classes))
+    print(classification_report(Y_test, y_classes, digits=6))
