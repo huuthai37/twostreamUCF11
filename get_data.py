@@ -72,7 +72,7 @@ def stackRGB(chunk,data_folder_rgb):
 
     return (np.array(stack_rgb), labels)
 
-def stackrOpticalFlow(chunk,data_folder,opt_size):
+def stackOpticalFlow(chunk,data_folder,opt_size):
     labels = []
     stack_opt = []
     for opt in chunk:
