@@ -58,7 +58,12 @@ def stackRGB(chunk,data_folder_rgb):
         labels.append(rgb[2])
 
         rgb = cv2.imread(data_folder_rgb + folder_rgb + '-' + str(start_rgb) + '.jpg')
-        # resize_rgb = cv2.resize(rgb, (224, 224))
+        rgb = rgb.astype('float16',copy=False)
+        rgb/=255
+
+        stack_rgb.append(rgb)
+
+        rgb = cv2.imread(data_folder_rgb + folder_rgb + '-' + str(start_rgb) + '-flip.jpg')
         rgb = rgb.astype('float16',copy=False)
         rgb/=255
 
