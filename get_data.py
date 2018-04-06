@@ -46,7 +46,6 @@ def getClassData(keys):
     labels = []
     for opt in keys:
         labels.append(opt[2])
-        labels.append(opt[2])
 
     return labels
 
