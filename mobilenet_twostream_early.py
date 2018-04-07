@@ -91,7 +91,10 @@ else:
     z = Multiply()([x, y])
 
 z = GlobalAveragePooling2D()(z)
-z = Reshape((1,1,1024))(z)
+if fusion != 'concat':
+    z = Reshape((1,1,1024))(z)
+else:
+    z = Reshape((1,1,2048))(z)
 z = Dropout(0.5)(z)
 z = Flatten()(z)
 z = Dense(classes, activation='softmax')(z)
