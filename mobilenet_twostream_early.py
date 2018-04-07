@@ -85,6 +85,8 @@ if fusion == 'avg':
     z = Average()([x, y])
 elif fusion == 'max':
     z = Maximum()([x, y])
+elif fusion == 'concat':
+    z = Concatenate()([x, y])
 else:
     z = Multiply()([x, y])
 
