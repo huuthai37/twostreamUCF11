@@ -49,15 +49,17 @@ if train & (not retrain):
     result_model = xception.XceptionFix(
         include_top=True,  
         weights='imagenet',
-        input_shape=(224,224,3)
+        input_shape=(224,224,3),
+        classes=classes
     )
 else:
     result_model = xception.XceptionFix(
         include_top=True, 
-        input_shape=(224,224,3) 
+        input_shape=(224,224,3),
+        classes=classes
     )
 
-result_model.summary()
+# result_model.summary()
 
 result_model.compile(loss='categorical_crossentropy',
               optimizer=optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True),
@@ -101,7 +103,7 @@ if train:
                     0), 
                 verbose=1, 
                 max_queue_size=2, 
-                steps_per_epoch=len_samples/batch_size, 
+                steps_per_epoch=int(np.ceil(len_samples*1.0/batch_size)), 
                 epochs=1,
                 validation_data=gd.getTrainData(
                     keys_valid,
@@ -110,7 +112,7 @@ if train:
                     1,
                     'test',
                     0),
-                validation_steps=len_valid/batch_size
+                validation_steps=int(np.ceil(len_valid*1.0/batch_size))
             )
             histories.append([
                 history.history['acc'],
