@@ -62,7 +62,7 @@ inst.setUseSpatialPropagation(True)
 with open(text_file) as f1:
     for line in f1:
         # tao ten va folder anh
-        arr_line = line.rstrip() 
+        arr_line = line.split(' ')[0]
         path_video = arr_line.split('/') # return array (folder,subfolder,name.mpg)
         num_name = len(path_video) # return 3
         name_video = path_video[num_name - 1].split('.')[0] # return name ko co .mpg
