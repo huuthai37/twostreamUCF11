@@ -27,19 +27,16 @@ for i in range(length):
 	start_opt = data[i][1]
 	if (i>0) & (data[i] == data[i-1]):
 		print ('Duplicate', i)
-	for j in range(start_opt, start_opt + 20):
-		if type_data != 'rgb':
-			img = cv2.imread(dir_data + fileimg + '/' + str(j) + '.jpg')
-		else:
-			img = cv2.imread(dir_data + fileimg + '-' + str(j) + '.jpg')
-		
+
+	if type_data == 'rgb':
+		img = cv2.imread(dir_data + fileimg + '-' + str(i) + '.jpg')
 		height, width, channels = img.shape
-		if type_data == 'rgb':
-			if (img is None) | ((height != 224) & (width != 224)):
-				print data[i]
-				print img.shape
-				break
-		else:
+		if (img is None) | ((height != 224) & (width != 224)):
+			print data[i]
+			print img.shape
+	else:
+		for j in range(start_opt, start_opt + 20):
+			img = cv2.imread(dir_data + fileimg + '/' + str(j) + '.jpg')
 			if (img is None):
 				print data[i]
 				break
