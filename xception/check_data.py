@@ -30,9 +30,9 @@ for i in range(length):
 
 	if type_data == 'rgb':
 		img = cv2.imread(dir_data + fileimg + '-' + str(start_opt) + '.jpg')
-		
+		height, width, channels = img.shape
 		if (img is None) | ((height != 224) & (width != 224)):
-			height, width, channels = img.shape
+			
 			print data[i]
 			print img.shape
 	else:
