@@ -262,9 +262,10 @@ def XceptionFix(include_top=True, weights='imagenet',
 									cache_subdir='models',
 									file_hash='b0042744bf5b25fce3cb969f33bebb97')
 		model.load_weights(weights_path)
+		print('loaded weight imagenet')
 	elif weights is not None:
 		model.load_weights(weights)
-		print('loaded')
+		print('loaded pretrain weight')
 
 	z = GlobalAveragePooling2D()(x)
 	z = Dense(classes, activation='softmax')(z)
