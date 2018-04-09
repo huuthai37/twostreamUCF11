@@ -31,7 +31,7 @@ else:
 server = config.server()
 
 if server:
-    data_output_folder = r'/home/oanhnt/thainh/data/opt{}/{}/'.format(sample_rate,train)
+    data_output_folder = r'/home/oanhnt/thainh/data/opt{}/'.format(sample_rate)
     text_file = r'data/{}list.txt'.format(train)
     class_file = r'data/classInd.txt'
     data_input_folder = '/home/oanhnt/thainh/UCF-11/'
