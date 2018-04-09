@@ -103,7 +103,7 @@ if train:
                     0), 
                 verbose=1, 
                 max_queue_size=2, 
-                steps_per_epoch=int(np.ceil(len_samples*1.0/batch_size)), 
+                steps_per_epoch=len_samples/batch_size, 
                 epochs=1,
                 validation_data=gd.getTrainData(
                     keys_valid,
