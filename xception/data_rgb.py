@@ -25,7 +25,7 @@ else:
 # Cau hinh folder du lieu
 server = config.server()
 if server:
-    data_output_folder = r'/home/oanhnt/thainh/data/rgb/{}/'.format(train)
+    data_output_folder = r'/home/oanhnt/thainh/data/rgb/'
     data_input_folder = '/home/oanhnt/thainh/UCF-11/'
     out_file = r'/home/oanhnt/thainh/data/database/{}-rgb.pickle'.format(train)
 else:
