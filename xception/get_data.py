@@ -56,7 +56,6 @@ def stackRGB(chunk,data_folder_rgb):
         folder_rgb = rgb[0]
         start_rgb = rgb[1]
         labels.append(rgb[2])
-        labels.append(rgb[2])
 
         rgb = cv2.imread(data_folder_rgb + folder_rgb + '-' + str(start_rgb) + '.jpg')
         rgb = rgb.astype('float16',copy=False)
