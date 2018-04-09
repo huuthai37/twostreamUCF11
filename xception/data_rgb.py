@@ -52,10 +52,8 @@ with open(class_file) as f0:
 with open(text_file) as f:
     for line in f:
         # Tao duong dan va ten file anh
-        if train != 'test':
-            arr_line = line.split(' ')[0] # return folder/subfolder/name.mpg
-        else:
-            arr_line = line.rstrip()
+        arr_line = line.split(' ')[0] # return folder/subfolder/name.mpg
+
         path_video = arr_line.split('/') # return array (folder,subfolder,name.mpg)
         num_name = len(path_video) # return 3
         name_video = path_video[num_name - 1].split('.')[0] # return name ko co .mpg
