@@ -58,10 +58,11 @@ def stackRGB(chunk,data_folder_rgb):
         labels.append(rgb[2])
 
         rgb = cv2.imread(data_folder_rgb + folder_rgb + '-' + str(start_rgb) + '.jpg')
-        rgb = rgb.astype('float16',copy=False)
-        rgb/=255
+        resize_rgb = cv2.resize(rgb, (299, 299))
+        resize_rgb = resize_rgb.astype('float16',copy=False)
+        resize_rgb/=255
 
-        stack_rgb.append(rgb)
+        stack_rgb.append(resize_rgb)
 
     return (np.array(stack_rgb), labels)
 
@@ -80,7 +81,7 @@ def stackOpticalFlow(chunk,data_folder,opt_size):
             height, width = img.shape
             crop_pos = int((width-height)/2)
             img = img[:,crop_pos:crop_pos+height]
-            resize_img = cv2.resize(img, (224, 224))
+            resize_img = cv2.resize(img, (299, 299))
             arrays.append(resize_img)
 
         nstack = np.dstack(arrays)
@@ -109,7 +110,7 @@ def stackOpticalFlowRGB(chunk,data_folder_opt,data_folder_rgb,opt_size):
         # Stack RGB
         rgb = cv2.imread(data_folder_rgb + folder_opt + '-' + str(start_rgb) + '.jpg')
         if not server:
-            rgb = cv2.resize(rgb, (224, 224))
+            rgb = cv2.resize(rgb, (299, 299))
         if rgb is None:
             print opt
             break
@@ -122,7 +123,7 @@ def stackOpticalFlowRGB(chunk,data_folder_opt,data_folder_rgb,opt_size):
             height, width = img.shape
             crop_pos = int((width-height)/2)
             img = img[:,crop_pos:crop_pos+height]
-            resize_img = cv2.resize(img, (224, 224))
+            resize_img = cv2.resize(img, (299, 299))
             arrays.append(resize_img)
 
         nstack = np.dstack(arrays)

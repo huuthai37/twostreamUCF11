@@ -49,13 +49,13 @@ if train & (not retrain):
     result_model = xception.XceptionFix(
         include_top=True,  
         weights='imagenet',
-        input_shape=(224,224,3),
+        input_shape=(299,299,3),
         classes=classes
     )
 else:
     result_model = xception.XceptionFix(
         include_top=True, 
-        input_shape=(224,224,3),
+        input_shape=(299,299,3),
         classes=classes
     )
 
