@@ -36,7 +36,7 @@ if server:
         out_file = r'/home/oanhnt/thainh/data/database/train-rgb.pickle'
     else:
         out_file = r'/home/oanhnt/thainh/data/database/test-rgb.pickle'
-    valid_file = r'/home/oanhnt/thainh/data/database/valid-rgb.pickle'
+    valid_file = r'/home/oanhnt/thainh/data/database/test-rgb.pickle'
 else:
     if train:
         out_file = r'/mnt/smalldata/database/train-rgb.pickle'
@@ -112,9 +112,9 @@ if train:
                     batch_size,
                     classes,
                     1,
-                    'valid',
+                    'test',
                     0),
-                validation_steps=len_valid/batch_size
+                validation_steps=int(np.ceil(len_valid*1.0/batch_size))
             )
             histories.append([
                 history.history['acc'],
