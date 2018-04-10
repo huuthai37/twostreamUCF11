@@ -63,8 +63,6 @@ result_model.compile(loss='categorical_crossentropy',
 if train:
     if retrain:
         result_model.load_weights('weights/mobilenet_temporal{}_{}e.h5'.format(opt_size,old_epochs))
-    else:
-        result_model.get_layer('conv_new').set_weights(gd.convert_weights(layers[2].get_weights(), depth))
 
     with open(out_file,'rb') as f1:
         keys = pickle.load(f1)
