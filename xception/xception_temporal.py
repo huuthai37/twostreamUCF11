@@ -41,7 +41,7 @@ if server:
         out_file = r'/home/oanhnt/thainh/data/database/train-opt{}.pickle'.format(opt_size)
     else:
         out_file = r'/home/oanhnt/thainh/data/database/test-opt{}.pickle'.format(opt_size)
-    valid_file = r'/home/oanhnt/thainh/data/database/valid-opt{}.pickle'.format(opt_size)
+    valid_file = r'/home/oanhnt/thainh/data/database/test-opt{}.pickle'.format(opt_size)
 else:
     if train:
         out_file = r'/mnt/smalldata/database/train-opt{}.pickle'.format(opt_size)
@@ -107,9 +107,9 @@ if train:
                     batch_size,
                     classes,
                     2,
-                    'valid',
+                    'test',
                     opt_size),
-                validation_steps=len_valid/batch_size
+                validation_steps=int(np.ceil(len_samples*1.0/batch_size))
             )
             histories.append([
                 history.history['acc'],
