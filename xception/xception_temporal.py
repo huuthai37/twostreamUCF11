@@ -33,7 +33,7 @@ epochs = int(sys.argv[4])
 classes = int(sys.argv[5])
 
 depth = 20
-input_shape = (224,224,depth)
+input_shape = (299,299,depth)
 
 server = config.server()
 if server:
