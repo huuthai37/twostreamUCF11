@@ -20,8 +20,8 @@ def getTrainData(keys,batch_size,classes,mode,train,opt_size):
     mode 3: RGB + Optical Stream
     """
     if server:
-        data_folder_rgb = r'/home/oanhnt/thainh/data/rgb/{}/'.format(train)
-        data_folder_opt = r'/home/oanhnt/thainh/data/opt{}/{}/'.format(opt_size, train)
+        data_folder_rgb = r'/home/oanhnt/thainh/data/rgb/'
+        data_folder_opt = r'/home/oanhnt/thainh/data/opt{}/'.format(opt_size)
     else:
         data_folder_rgb = r'/mnt/smalldata/rgb/{}/'.format(train)
         data_folder_opt = r'/mnt/smalldata/opt/{}/'.format(train)
@@ -56,15 +56,8 @@ def stackRGB(chunk,data_folder_rgb):
         folder_rgb = rgb[0]
         start_rgb = rgb[1]
         labels.append(rgb[2])
-        labels.append(rgb[2])
 
         rgb = cv2.imread(data_folder_rgb + folder_rgb + '-' + str(start_rgb) + '.jpg')
-        rgb = rgb.astype('float16',copy=False)
-        rgb/=255
-
-        stack_rgb.append(rgb)
-
-        rgb = cv2.imread(data_folder_rgb + folder_rgb + '-' + str(start_rgb) + '-flip.jpg')
         rgb = rgb.astype('float16',copy=False)
         rgb/=255
 
