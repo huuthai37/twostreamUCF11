@@ -107,7 +107,7 @@ if train:
                     2,
                     'test',
                     opt_size),
-                validation_steps=int(np.ceil(len_samples*1.0/batch_size))
+                validation_steps=int(np.ceil(len_valid*1.0/batch_size))
             )
             histories.append([
                 history.history['acc'],
@@ -134,13 +134,13 @@ if train:
                 history.history['acc'],
                 history.history['loss']
             ])
-        result_model.save_weights('weights/mobilenet_temporal{}_{}e.h5'.format(opt_size,old_epochs+1+e))
+        result_model.save_weights('weights/xception_temporal{}_{}e.h5'.format(opt_size,old_epochs+1+e))
 
-        with open('data/trainHistoryTemporal{}_{}_{}e'.format(opt_size, old_epochs, epochs), 'wb') as file_pi:
+        with open('data/XceptionTemporal{}_{}_{}e'.format(opt_size, old_epochs, epochs), 'wb') as file_pi:
             pickle.dump(histories, file_pi)
 
 else:
-    result_model.load_weights('weights/mobilenet_temporal{}_{}e.h5'.format(opt_size,epochs))
+    result_model.load_weights('weights/xception_temporal{}_{}e.h5'.format(opt_size,epochs))
 
     with open(out_file,'rb') as f2:
         keys = pickle.load(f2)
