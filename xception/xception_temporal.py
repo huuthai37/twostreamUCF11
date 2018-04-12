@@ -11,9 +11,9 @@ import config
 from sklearn.metrics import classification_report
 import xception
 
-# train: python mobilenet_temporal.py train 1 32 1 101
-# test: python mobilenet_temporal.py test 1 32 1 101
-# retrain: python mobilenet_temporal.py retrain 1 32 1 101 1
+# train: python xception_temporal.py train 1 32 1 11
+# test: python xception_temporal.py test 1 32 1 11
+# retrain: python xception_temporal.py retrain 1 32 1 11 1
 
 if sys.argv[1] == 'train':
     train = True
@@ -49,8 +49,6 @@ else:
         out_file = r'/mnt/smalldata/database/test-opt{}.pickle'.format(opt_size)
 
 result_model = xception.XceptionFix(
-    include_top=True,  
-    weights='imagenet',
     input_shape=input_shape,
     classes=classes
 )
@@ -62,7 +60,9 @@ result_model.compile(loss='categorical_crossentropy',
 
 if train:
     if retrain:
-        result_model.load_weights('weights/mobilenet_temporal{}_{}e.h5'.format(opt_size,old_epochs))
+        result_model.load_weights('weights/xception_temporal{}_{}e.h5'.format(opt_size,old_epochs))
+    else:
+        result_model.load_weights('weights/xception_temporal_0e.h5')
 
     with open(out_file,'rb') as f1:
         keys = pickle.load(f1)
@@ -74,7 +74,7 @@ if train:
         len_valid = len(keys_valid)
 
     print('-'*40)
-    print 'MobileNet Optical #{} stream only: Training'.format(opt_size)
+    print 'Xception Temporal #{} stream only: Training'.format(opt_size)
     print('-'*40)
     print 'Number samples: {}'.format(len_samples)
     if server:
@@ -115,25 +115,6 @@ if train:
                 history.history['loss'],
                 history.history['val_loss']
             ])
-        else:
-            history = result_model.fit_generator(
-                gd.getTrainData(
-                    keys,
-                    batch_size,
-                    classes,
-                    2,
-                    'train',
-                    opt_size), 
-                verbose=1, 
-                max_queue_size=2, 
-                steps_per_epoch=3, 
-                epochs=1
-            )
-
-            histories.append([
-                history.history['acc'],
-                history.history['loss']
-            ])
         result_model.save_weights('weights/xception_temporal{}_{}e.h5'.format(opt_size,old_epochs+1+e))
 
         with open('data/XceptionTemporal{}_{}_{}e'.format(opt_size, old_epochs, epochs), 'wb') as file_pi:
@@ -146,23 +127,9 @@ else:
         keys = pickle.load(f2)
     len_samples = len(keys)
     print('-'*40)
-    print 'MobileNet Optical #{} stream only: Testing'.format(opt_size)
+    print 'Xception Temporal #{} stream only: Testing'.format(opt_size)
     print('-'*40)
     print 'Number samples: {}'.format(len_samples)
-
-    # score = result_model.evaluate_generator(
-    #     gd.getTrainData(
-    #         keys,
-    #         batch_size,
-    #         classes,
-    #         2,
-    #         'test',
-    #         opt_size), 
-    #     max_queue_size=3, 
-    #     steps=len_samples/batch_size
-    # )
-    # print('Test loss:', score[0])
-    # print('Test accuracy:', score[1])
 
     Y_test = gd.getClassData(keys)
     y_pred = result_model.predict_generator(

@@ -13,9 +13,10 @@ from keras.layers import Conv2D
 from keras.layers import SeparableConv2D
 from keras.layers import MaxPooling2D
 from keras.layers import GlobalAveragePooling2D
+from keras.layers import Dropout
 from keras.layers import GlobalMaxPooling2D
 
-def XceptionFix(include_top=True, input_shape=None, classes=1000, weights=None):
+def XceptionFix(include_top=True, input_shape=None, classes=1000, weights=None, drop_rate=0.5):
 
     if input_shape is None:
         img_input = Input((299,299,3))
@@ -110,6 +111,7 @@ def XceptionFix(include_top=True, input_shape=None, classes=1000, weights=None):
 
     if include_top:
         x = GlobalAveragePooling2D()(x)
+        x = Dropout(drop_rate)(x)
         x = Dense(classes, activation='softmax')(x)
     
     model = Model(img_input, x)
