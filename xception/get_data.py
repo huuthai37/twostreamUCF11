@@ -5,6 +5,7 @@ from PIL import Image
 import cv2
 from keras.utils import np_utils
 import config
+from sklearn.metrics import classification_report
 
 server = config.server()
 
@@ -23,8 +24,8 @@ def getTrainData(keys,batch_size,classes,mode,train,opt_size):
         data_folder_rgb = r'/home/oanhnt/thainh/data/rgb/'
         data_folder_opt = r'/home/oanhnt/thainh/data/opt{}/'.format(opt_size)
     else:
-        data_folder_rgb = r'/mnt/smalldata/rgb/'.format(train)
-        data_folder_opt = r'/mnt/smalldata/opt/'.format(train)
+        data_folder_rgb = r'/mnt/smalldata/rgb/'
+        data_folder_opt = r'/mnt/smalldata/opt{}/{}/'.format(opt_size,train)
 
     while 1:
         for i in range(0, len(keys), batch_size):
@@ -48,6 +49,35 @@ def getClassData(keys):
         labels.append(opt[2])
 
     return labels
+
+def getScorePerVideo(result, data):
+
+    indVideo = []
+    dataVideo = []
+    length = len(data)
+    for i in range(length):
+        name = data[i][0].split('/')[1]
+        if name not in indVideo:
+            indVideo.append(name)
+            dataVideo.append([name,data[i][2],result[i], 1])
+        else:
+            index = indVideo.index(name)
+            dataVideo[index][2] = dataVideo[index][2] + result[i]
+            dataVideo[index][3] += 1
+
+    resultVideo = []
+    classVideo = []
+    len_data = len(dataVideo)
+    for i in range(len_data):
+        pred = dataVideo[i][2] / dataVideo[i][3]
+        resultVideo.append(pred)
+        classVideo.append(dataVideo[i][1])
+
+    resultVideoArr = np.array(resultVideo)
+    classVideoArr = np.array(classVideo)
+
+    y_classes = resultVideoArr.argmax(axis=-1)
+    return (classification_report(classVideoArr, y_classes, digits=6))
 
 def stackRGB(chunk,data_folder_rgb):
     labels = []
