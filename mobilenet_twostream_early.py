@@ -1,7 +1,7 @@
 import keras
 import sys
 from keras.models import Model
-from keras.layers import Dense, Conv2D, Activation, Reshape, Dropout, Flatten, Input, ZeroPadding2D, Average, Multiply, Maximum, GlobalAveragePooling2D
+from keras.layers import Dense, Conv2D, Activation, Reshape, Dropout, Flatten, Input, ZeroPadding2D, Average, Multiply, Maximum, GlobalAveragePooling2D, Concatenate
 import get_data as gd
 from keras import optimizers
 import pickle
