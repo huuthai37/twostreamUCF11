@@ -49,6 +49,35 @@ def getClassData(keys):
 
     return labels
 
+def getScorePerVideo(result, data):
+
+    indVideo = []
+    dataVideo = []
+    length = len(data)
+    for i in range(length):
+        name = data[i][0].split('/')[1]
+        if name not in indVideo:
+            indVideo.append(name)
+            dataVideo.append([name,data[i][2],result[i], 1])
+        else:
+            index = indVideo.index(name)
+            dataVideo[index][2] = dataVideo[index][2] + result[i]
+            dataVideo[index][3] += 1
+
+    resultVideo = []
+    classVideo = []
+    len_data = len(dataVideo)
+    for i in range(len_data):
+        pred = dataVideo[i][2] / dataVideo[i][3]
+        resultVideo.append(pred)
+        classVideo.append(dataVideo[i][1])
+
+    resultVideoArr = np.array(resultVideo)
+    classVideoArr = np.array(classVideo)
+
+    y_classes = resultVideoArr.argmax(axis=-1)
+    return (classification_report(classVideoArr, y_classes, digits=6))
+
 def stackRGB(chunk,data_folder_rgb):
     labels = []
     stack_rgb = []
