@@ -41,7 +41,7 @@ if server:
         out_file = r'/home/oanhnt/thainh/data/database/train-opt{}.pickle'.format(opt_size)
     else:
         out_file = r'/home/oanhnt/thainh/data/database/test-opt{}.pickle'.format(opt_size)
-    valid_file = r'/home/oanhnt/thainh/data/database/valid-opt{}.pickle'.format(opt_size)
+    valid_file = r'/home/oanhnt/thainh/data/database/test-opt{}.pickle'.format(opt_size)
 else:
     if train:
         out_file = '/mnt/smalldata/database/train-opt2.pickle'
@@ -151,7 +151,7 @@ if train:
                     batch_size,
                     classes,
                     3,
-                    'valid', 
+                    'test', 
                     opt_size),
                 validation_steps=len_valid/batch_size
             )

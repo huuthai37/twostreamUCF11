@@ -5,6 +5,7 @@ from PIL import Image
 import cv2
 from keras.utils import np_utils
 import config
+from sklearn.metrics import classification_report
 
 server = config.server()
 
