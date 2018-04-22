@@ -17,9 +17,9 @@ with open(opt_file,'rb') as f1:
 l = len(opt)
 opt_all = []
 for i in range(l):
-	if opt[i][1] % 10 == 0:
-		opt_all.append([opt[i][0], opt[i][1], opt[i][2], (opt[i][1]*2), (opt[i][1]*4)])
-		opt_all.append([opt[i][0], opt[i][1], opt[i][2], (opt[i][1]*2 + 10), ((opt[i][1] * 2 + 10) * 2)])
+		x = int(np.floor(opt[i][1]*1.0/5))*5
+		opt_all.append([opt[i][0], opt[i][1], opt[i][2], (x*2), (x*4)])
+		opt_all.append([opt[i][0], opt[i][1], opt[i][2], (x*2 + 10), ((x * 2 + 10) * 2)])
 
 print len(opt_all)
 if debug == 'run':
