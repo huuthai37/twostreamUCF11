@@ -179,10 +179,10 @@ def stackMultiple(chunk,opt_size):
 
     for opt in chunk:
         folder_opt = opt[0]
-        start_opt1 = opt[1]
+        start_opt1 = opt[4]
         labels.append(opt[2])
         start_opt2 = opt[3]
-        start_opt4 = opt[4]
+        start_opt4 = opt[1]
         arrays1 = []
         arrays2 = []
         arrays4 = []
