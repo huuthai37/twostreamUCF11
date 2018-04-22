@@ -39,7 +39,7 @@ def getTrainData(keys,batch_size,classes,mode,train,opt_size):
                 X_train,Y_train=stackOpticalFlowRGB(keys[i:i+batch_size],data_folder_opt,data_folder_rgb,opt_size)
 
             else:
-                X_train,Y_train=stackMultiple(keys[i:i+batch_size],data_folder_opt,data_folder_rgb,opt_size)
+                X_train,Y_train=stackMultiple(keys[i:i+batch_size],opt_size)
 
             Y_train=np_utils.to_categorical(Y_train,classes)
             if train == 'test':
@@ -168,56 +168,92 @@ def stackOpticalFlowRGB(chunk,data_folder_opt,data_folder_rgb,opt_size):
 
     return [np.array(stack_rgb), np.array(stack_opt)], labels
 
-def stackMultiple(chunk,data_folder_opt,data_folder_rgb,opt_size):
+def stackMultiple(chunk,opt_size):
     labels = []
-    stack_opt = []
-    stack_rgb = []
+    stack_opt1 = []
+    stack_opt2 = []
+    stack_opt4 = []
+    data_folder_opt1 = '/home/oanhnt/thainh/data/opt1/'
+    data_folder_opt2 = '/home/oanhnt/thainh/data/opt2/'
+    data_folder_opt4 = '/home/oanhnt/thainh/data/opt4/'
+
     for opt in chunk:
         folder_opt = opt[0]
-        start_opt = opt[1]
+        start_opt1 = opt[1]
         labels.append(opt[2])
-        arrays = []
+        start_opt2 = opt[3]
+        start_opt4 = opt[4]
+        arrays1 = []
+        arrays2 = []
+        arrays4 = []
 
-        # RGB Frame
-        if (start_opt % 20 > 0):
-            start_rgb = (int(np.floor(start_opt * opt_size / 20)) + 1 ) * 10
-        else:
-            start_rgb = int(start_opt * opt_size / 2)
-
-        # Stack RGB
-        rgb = cv2.imread(data_folder_rgb + folder_opt + '-' + str(start_rgb) + '.jpg')
-        if not server:
-            rgb = cv2.resize(rgb, (224, 224))
-        if rgb is None:
-            print opt
-            break
-        rgb = rgb.astype('float16',copy=False)
-        rgb/=255
-
-        # Stack optical flow
-        for i in range(start_opt, start_opt + 20):
-            img = cv2.imread(data_folder_opt + folder_opt  + '/' +  str(i) + '.jpg', 0)
+        # Stack optical flow 1
+        for i in range(start_opt1, start_opt1 + 20):
+            img = cv2.imread(data_folder_opt1 + folder_opt  + '/' +  str(i) + '.jpg', 0)
             height, width = img.shape
             crop_pos = int((width-height)/2)
             img = img[:,crop_pos:crop_pos+height]
             resize_img = cv2.resize(img, (224, 224))
-            arrays.append(resize_img)
+            arrays1.append(resize_img)
 
-        nstack = np.dstack(arrays)
-        nstack = nstack.astype('float16',copy=False)
-        nstack/=255
+        nstack1 = np.dstack(arrays1)
+        nstack1 = nstack1.astype('float16',copy=False)
+        nstack1/=255
         
-        # Stack chunk
-        stack_rgb.append(rgb)
-        stack_opt.append(nstack)
+        stack_opt1.append(nstack1)
 
-    return [np.array(stack_rgb), np.array(stack_opt), np.array(stack_opt), np.array(stack_opt)], labels
+        # Stack optical flow 2
+        for i in range(start_opt2, start_opt2 + 20):
+            img = cv2.imread(data_folder_opt2 + folder_opt  + '/' +  str(i) + '.jpg', 0)
+            height, width = img.shape
+            crop_pos = int((width-height)/2)
+            img = img[:,crop_pos:crop_pos+height]
+            resize_img = cv2.resize(img, (224, 224))
+            arrays2.append(resize_img)
 
-def convert_weights(weights, depth):
+        nstack2 = np.dstack(arrays2)
+        nstack2 = nstack2.astype('float16',copy=False)
+        nstack2/=255
+        
+        stack_opt2.append(nstack2)
+
+        # Stack optical flow 1
+        for i in range(start_opt4, start_opt4 + 20):
+            img = cv2.imread(data_folder_opt4 + folder_opt  + '/' +  str(i) + '.jpg', 0)
+            height, width = img.shape
+            crop_pos = int((width-height)/2)
+            img = img[:,crop_pos:crop_pos+height]
+            resize_img = cv2.resize(img, (224, 224))
+            arrays4.append(resize_img)
+
+        nstack4 = np.dstack(arrays4)
+        nstack4 = nstack4.astype('float16',copy=False)
+        nstack4/=255
+        
+        stack_opt4.append(nstack4)
+
+    return [np.array(stack_opt1), np.array(stack_opt2), np.array(stack_opt4)], labels
+
+def convert_weights(weights, depth, size=3, ins=32):
     mat = weights[0]
-    mat2 = np.empty([3,3,depth,32])
-    for i in range(32):
+    mat2 = np.empty([size,size,depth,ins])
+    for i in range(ins):
         x=(mat[:,:,0,i] + mat[:,:,1,i] + mat[:,:,2,i])/3
         for j in range(depth):
             mat2[:,:,j,i] = x
     return [mat2]
+
+def concat_weights(weights, depth, length):
+
+    mat = []
+    for i in range(depth):
+        mat.extend(weights[0])
+
+    mat2 = []
+    for i in range(length):
+        mat2.append(mat)
+    
+    return np.array(mat2)
+
+
+

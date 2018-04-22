@@ -48,11 +48,10 @@ def mobilenet_new(name, inputs, input_shape, classes, weight = '', concat_input=
         include_top=True,
         dropout=0.5,
     )
-    name = name + '_'
 
     # Disassemble layers
     layers = [l for l in model.layers]
-
+    name = name + '_'
     if concat_input:
         new_input = Concatenate()(inputs)
         x = ZeroPadding2D(padding=(1, 1))(new_input)
@@ -60,7 +59,8 @@ def mobilenet_new(name, inputs, input_shape, classes, weight = '', concat_input=
                   kernel_size=(3, 3),
                   padding='valid',
                   use_bias=False,
-                  strides=(2,2))(x)
+                  strides=(2,2),
+                  name=name+'conv_first_new')(x)
     else:
         length = len(inputs)
         outs = inputs
@@ -85,7 +85,8 @@ def mobilenet_new(name, inputs, input_shape, classes, weight = '', concat_input=
         x = Conv2D(64, (1, 1),
                padding='same',
                use_bias=False,
-               strides=(1, 1))(x)
+               strides=(1, 1),
+               name=name+'conv_last_new')(x)
 
     if concat_input:
         for i in range(3, len(layers)-3-cut):
