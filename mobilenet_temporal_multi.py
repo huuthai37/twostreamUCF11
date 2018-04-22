@@ -9,6 +9,7 @@ import random
 import numpy as np
 import config
 from sklearn.metrics import classification_report
+import mobilenet
 
 # train: python mobilenet_temporal.py train 32 1 101
 # test: python mobilenet_temporal.py test 32 1 101
