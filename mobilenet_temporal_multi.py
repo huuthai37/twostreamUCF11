@@ -150,7 +150,7 @@ if train:
             ])
         result_model.save_weights('weights/mobilenet_temporal_multi_{}e.h5'.format(old_epochs+1+e))
 
-        with open('data/trainHistoryTemporal{}_{}_{}e'.format(opt_size, old_epochs, epochs), 'wb') as file_pi:
+        with open('data/trainHistoryTemporalMulti_{}_{}e'.format(old_epochs, epochs), 'wb') as file_pi:
             pickle.dump(histories, file_pi)
 
 else:
