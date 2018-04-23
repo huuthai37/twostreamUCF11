@@ -298,7 +298,7 @@ def stackMultipleInput(chunk,opt_size):
         
         stack_opt.append(nstack4)
 
-    return (np.array(stack_opt1), labels)
+    return (np.array(stack_opt), labels)
 
 def convert_weights(weights, depth, size=3, ins=32):
     mat = weights[0]
