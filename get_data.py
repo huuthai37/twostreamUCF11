@@ -249,9 +249,7 @@ def stackMultipleInput(chunk,opt_size):
         labels.append(opt[2])
         start_opt2 = opt[3]
         start_opt4 = opt[1]
-        arrays1 = []
-        arrays2 = []
-        arrays4 = []
+        arrays = []
 
         # Stack optical flow 1
         for i in range(start_opt1, start_opt1 + 20):
@@ -260,13 +258,7 @@ def stackMultipleInput(chunk,opt_size):
             crop_pos = int((width-height)/2)
             img = img[:,crop_pos:crop_pos+height]
             resize_img = cv2.resize(img, (224, 224))
-            arrays1.append(resize_img)
-
-        nstack1 = np.dstack(arrays1)
-        nstack1 = nstack1.astype('float16',copy=False)
-        nstack1/=255
-        
-        stack_opt.append(nstack1)
+            arrays.append(resize_img)
 
         # Stack optical flow 2
         for i in range(start_opt2, start_opt2 + 20):
@@ -275,28 +267,22 @@ def stackMultipleInput(chunk,opt_size):
             crop_pos = int((width-height)/2)
             img = img[:,crop_pos:crop_pos+height]
             resize_img = cv2.resize(img, (224, 224))
-            arrays2.append(resize_img)
+            arrays.append(resize_img)
 
-        nstack2 = np.dstack(arrays2)
-        nstack2 = nstack2.astype('float16',copy=False)
-        nstack2/=255
-        
-        stack_opt.append(nstack2)
-
-        # Stack optical flow 1
+        # Stack optical flow 4
         for i in range(start_opt4, start_opt4 + 20):
             img = cv2.imread(data_folder_opt4 + folder_opt  + '/' +  str(i) + '.jpg', 0)
             height, width = img.shape
             crop_pos = int((width-height)/2)
             img = img[:,crop_pos:crop_pos+height]
             resize_img = cv2.resize(img, (224, 224))
-            arrays4.append(resize_img)
+            arrays.append(resize_img)
 
-        nstack4 = np.dstack(arrays4)
-        nstack4 = nstack4.astype('float16',copy=False)
-        nstack4/=255
+        nstack = np.dstack(arrays)
+        nstack = nstack.astype('float16',copy=False)
+        nstack/=255
         
-        stack_opt.append(nstack4)
+        stack_opt.append(nstack)
 
     return (np.array(stack_opt), labels)
 
