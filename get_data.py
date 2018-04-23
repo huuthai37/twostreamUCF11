@@ -38,8 +38,10 @@ def getTrainData(keys,batch_size,classes,mode,train,opt_size):
             elif mode == 3:
                 X_train,Y_train=stackOpticalFlowRGB(keys[i:i+batch_size],data_folder_opt,data_folder_rgb,opt_size)
 
-            else:
+            elif mode == 4:
                 X_train,Y_train=stackMultiple(keys[i:i+batch_size],opt_size)
+            else:
+                X_train,Y_train=stackMultipleInput(keys[i:i+batch_size],opt_size)
 
             Y_train=np_utils.to_categorical(Y_train,classes)
             if train == 'test':
@@ -233,6 +235,70 @@ def stackMultiple(chunk,opt_size):
         stack_opt4.append(nstack4)
 
     return [np.array(stack_opt1), np.array(stack_opt2), np.array(stack_opt4)], labels
+
+def stackMultipleInput(chunk,opt_size):
+    labels = []
+    stack_opt = []
+    data_folder_opt1 = '/home/oanhnt/thainh/data/opt1/'
+    data_folder_opt2 = '/home/oanhnt/thainh/data/opt2/'
+    data_folder_opt4 = '/home/oanhnt/thainh/data/opt4/'
+
+    for opt in chunk:
+        folder_opt = opt[0]
+        start_opt1 = opt[4]
+        labels.append(opt[2])
+        start_opt2 = opt[3]
+        start_opt4 = opt[1]
+        arrays1 = []
+        arrays2 = []
+        arrays4 = []
+
+        # Stack optical flow 1
+        for i in range(start_opt1, start_opt1 + 20):
+            img = cv2.imread(data_folder_opt1 + folder_opt  + '/' +  str(i) + '.jpg', 0)
+            height, width = img.shape
+            crop_pos = int((width-height)/2)
+            img = img[:,crop_pos:crop_pos+height]
+            resize_img = cv2.resize(img, (224, 224))
+            arrays1.append(resize_img)
+
+        nstack1 = np.dstack(arrays1)
+        nstack1 = nstack1.astype('float16',copy=False)
+        nstack1/=255
+        
+        stack_opt.append(nstack1)
+
+        # Stack optical flow 2
+        for i in range(start_opt2, start_opt2 + 20):
+            img = cv2.imread(data_folder_opt2 + folder_opt  + '/' +  str(i) + '.jpg', 0)
+            height, width = img.shape
+            crop_pos = int((width-height)/2)
+            img = img[:,crop_pos:crop_pos+height]
+            resize_img = cv2.resize(img, (224, 224))
+            arrays2.append(resize_img)
+
+        nstack2 = np.dstack(arrays2)
+        nstack2 = nstack2.astype('float16',copy=False)
+        nstack2/=255
+        
+        stack_opt.append(nstack2)
+
+        # Stack optical flow 1
+        for i in range(start_opt4, start_opt4 + 20):
+            img = cv2.imread(data_folder_opt4 + folder_opt  + '/' +  str(i) + '.jpg', 0)
+            height, width = img.shape
+            crop_pos = int((width-height)/2)
+            img = img[:,crop_pos:crop_pos+height]
+            resize_img = cv2.resize(img, (224, 224))
+            arrays4.append(resize_img)
+
+        nstack4 = np.dstack(arrays4)
+        nstack4 = nstack4.astype('float16',copy=False)
+        nstack4/=255
+        
+        stack_opt.append(nstack4)
+
+    return (np.array(stack_opt1), labels)
 
 def convert_weights(weights, depth, size=3, ins=32):
     mat = weights[0]
