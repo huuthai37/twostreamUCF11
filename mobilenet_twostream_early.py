@@ -87,6 +87,9 @@ elif fusion == 'max':
     z = Maximum()([x, y])
 elif fusion == 'concat':
     z = Concatenate()([x, y])
+elif fusion == 'conv':
+    z = Concatenate()([x, y])
+    z = Conv2D(1024, (1, 1), use_bias=True)(z)
 else:
     z = Multiply()([x, y])
 
