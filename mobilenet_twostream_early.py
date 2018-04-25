@@ -89,22 +89,24 @@ elif fusion == 'concat':
     z = Concatenate()([x, y])
 elif fusion == 'conv':
     z = Concatenate()([x, y])
-    z = Conv2D(1024, (1, 1), use_bias=True)(z)
+    z = Conv2D(256, (1, 1), use_bias=True)(z)
 else:
     z = Multiply()([x, y])
 
 z = GlobalAveragePooling2D()(z)
-if fusion != 'concat':
-    z = Reshape((1,1,1024))(z)
-else:
+if fusion == 'concat':
     z = Reshape((1,1,2048))(z)
+elif fusion == 'conv':
+    z = Reshape((1,1,256))(z)
+else:
+    z = Reshape((1,1,1024))(z)
 z = Dropout(0.5)(z)
 z = Flatten()(z)
 z = Dense(classes, activation='softmax')(z)
 
 # Final touch
 result_model = Model(inputs=[input_x, input_y], outputs=z)
-
+result_model.summary()
 # Run
 result_model.compile(loss='categorical_crossentropy',
               optimizer=optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True),
