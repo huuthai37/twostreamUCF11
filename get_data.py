@@ -6,6 +6,7 @@ import cv2
 from keras.utils import np_utils
 import config
 from sklearn.metrics import classification_report
+from keras import backend as K
 
 server = config.server()
 
@@ -14,7 +15,7 @@ def chunks(l, n):
     for i in xrange(0, len(l), n):
         yield l[i:i+n]
 
-def getTrainData(keys,batch_size,classes,mode,train,opt_size): 
+def getTrainData(keys,batch_size,classes,mode,train,opt_size,opt_size1=0): 
     """
     mode 1: RGB Stream
     mode 2: Optical Stream
@@ -39,7 +40,7 @@ def getTrainData(keys,batch_size,classes,mode,train,opt_size):
                 X_train,Y_train=stackOpticalFlowRGB(keys[i:i+batch_size],data_folder_opt,data_folder_rgb,opt_size)
 
             elif mode == 4:
-                X_train,Y_train=stackMultiple(keys[i:i+batch_size],opt_size)
+                X_train,Y_train=stackMultiple(keys[i:i+batch_size],data_folder_rgb,opt_size,opt_size1)
             else:
                 X_train,Y_train=stackMultipleInput(keys[i:i+batch_size],opt_size)
 
@@ -170,7 +171,7 @@ def stackOpticalFlowRGB(chunk,data_folder_opt,data_folder_rgb,opt_size):
 
     return [np.array(stack_rgb), np.array(stack_opt)], labels
 
-def stackMultiple(chunk,opt_size):
+def stackMultiple(chunk,data_folder_rgb,opt_size,opt_size1):
     labels = []
     stack_opt1 = []
     stack_opt2 = []
@@ -178,6 +179,8 @@ def stackMultiple(chunk,opt_size):
     data_folder_opt1 = '/home/oanhnt/thainh/data/opt1/'
     data_folder_opt2 = '/home/oanhnt/thainh/data/opt2/'
     data_folder_opt4 = '/home/oanhnt/thainh/data/opt4/'
+    opts = [opt_size, opt_size1]
+    returns = []
 
     for opt in chunk:
         folder_opt = opt[0]
@@ -189,52 +192,73 @@ def stackMultiple(chunk,opt_size):
         arrays2 = []
         arrays4 = []
 
-        # Stack optical flow 1
-        for i in range(start_opt1, start_opt1 + 20):
-            img = cv2.imread(data_folder_opt1 + folder_opt  + '/' +  str(i) + '.jpg', 0)
-            height, width = img.shape
-            crop_pos = int((width-height)/2)
-            img = img[:,crop_pos:crop_pos+height]
-            resize_img = cv2.resize(img, (224, 224))
-            arrays1.append(resize_img)
+        rgb = cv2.imread(data_folder_rgb + folder_opt + '-' + str(start_opt1) + '.jpg')
+        if not server:
+            rgb = cv2.resize(rgb, (224, 224))
+        if rgb is None:
+            print opt
+            break
+        rgb = rgb.astype('float16',copy=False)
+        rgb/=255
+        stack_rgb.append(rgb)
 
-        nstack1 = np.dstack(arrays1)
-        nstack1 = nstack1.astype('float16',copy=False)
-        nstack1/=255
-        
-        stack_opt1.append(nstack1)
+        # Stack optical flow 1
+        if 1 in opts:
+            for i in range(start_opt1, start_opt1 + 20):
+                img = cv2.imread(data_folder_opt1 + folder_opt  + '/' +  str(i) + '.jpg', 0)
+                height, width = img.shape
+                crop_pos = int((width-height)/2)
+                img = img[:,crop_pos:crop_pos+height]
+                resize_img = cv2.resize(img, (224, 224))
+                arrays1.append(resize_img)
+
+            nstack1 = np.dstack(arrays1)
+            nstack1 = nstack1.astype('float16',copy=False)
+            nstack1/=255
+            
+            stack_opt1.append(nstack1)
 
         # Stack optical flow 2
-        for i in range(start_opt2, start_opt2 + 20):
-            img = cv2.imread(data_folder_opt2 + folder_opt  + '/' +  str(i) + '.jpg', 0)
-            height, width = img.shape
-            crop_pos = int((width-height)/2)
-            img = img[:,crop_pos:crop_pos+height]
-            resize_img = cv2.resize(img, (224, 224))
-            arrays2.append(resize_img)
+        if 2 in opts:
+            for i in range(start_opt2, start_opt2 + 20):
+                img = cv2.imread(data_folder_opt2 + folder_opt  + '/' +  str(i) + '.jpg', 0)
+                height, width = img.shape
+                crop_pos = int((width-height)/2)
+                img = img[:,crop_pos:crop_pos+height]
+                resize_img = cv2.resize(img, (224, 224))
+                arrays2.append(resize_img)
 
-        nstack2 = np.dstack(arrays2)
-        nstack2 = nstack2.astype('float16',copy=False)
-        nstack2/=255
-        
-        stack_opt2.append(nstack2)
+            nstack2 = np.dstack(arrays2)
+            nstack2 = nstack2.astype('float16',copy=False)
+            nstack2/=255
+            
+            stack_opt2.append(nstack2)
 
         # Stack optical flow 1
-        for i in range(start_opt4, start_opt4 + 20):
-            img = cv2.imread(data_folder_opt4 + folder_opt  + '/' +  str(i) + '.jpg', 0)
-            height, width = img.shape
-            crop_pos = int((width-height)/2)
-            img = img[:,crop_pos:crop_pos+height]
-            resize_img = cv2.resize(img, (224, 224))
-            arrays4.append(resize_img)
+        if 3 in opts:
+            for i in range(start_opt4, start_opt4 + 20):
+                img = cv2.imread(data_folder_opt4 + folder_opt  + '/' +  str(i) + '.jpg', 0)
+                height, width = img.shape
+                crop_pos = int((width-height)/2)
+                img = img[:,crop_pos:crop_pos+height]
+                resize_img = cv2.resize(img, (224, 224))
+                arrays4.append(resize_img)
 
-        nstack4 = np.dstack(arrays4)
-        nstack4 = nstack4.astype('float16',copy=False)
-        nstack4/=255
-        
-        stack_opt4.append(nstack4)
+            nstack4 = np.dstack(arrays4)
+            nstack4 = nstack4.astype('float16',copy=False)
+            nstack4/=255
+            
+            stack_opt4.append(nstack4)
 
-    return [np.array(stack_opt1), np.array(stack_opt2), np.array(stack_opt4)], labels
+    returns.append(stack_rgb)
+    if 1 in opts:
+        returns.append(stack_opt1)
+    if 2 in opts:
+        returns.append(stack_opt2)
+    if 4 in opts:
+        returns.append(stack_opt4)
+
+    return returns, labels
 
 def stackMultipleInput(chunk,opt_size):
     labels = []
@@ -306,6 +330,25 @@ def concat_weights(weights, depth, length):
         mat2.append(mat)
     
     return np.array(mat2)
+
+
+def get_model_memory_usage(model, batch_size):
+
+    shapes_mem_count = 0
+    for l in model.layers:
+        single_layer_mem = 1
+        for s in l.output_shape:
+            if s is None:
+                continue
+            single_layer_mem *= s
+        shapes_mem_count += single_layer_mem
+
+    trainable_count = np.sum([K.count_params(p) for p in set(model.trainable_weights)])
+    non_trainable_count = np.sum([K.count_params(p) for p in set(model.non_trainable_weights)])
+
+    total_memory = 4.0*batch_size*(shapes_mem_count + trainable_count + non_trainable_count)
+    gbytes = np.round(total_memory / (1024.0 ** 3), 3)
+    return gbytes
 
 
 
