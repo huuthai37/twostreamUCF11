@@ -176,6 +176,7 @@ def stackMultiple(chunk,data_folder_rgb,opt_size,opt_size1):
     stack_opt1 = []
     stack_opt2 = []
     stack_opt4 = []
+    stack_rgb = []
     data_folder_opt1 = '/home/oanhnt/thainh/data/opt1/'
     data_folder_opt2 = '/home/oanhnt/thainh/data/opt2/'
     data_folder_opt4 = '/home/oanhnt/thainh/data/opt4/'
@@ -192,7 +193,7 @@ def stackMultiple(chunk,data_folder_rgb,opt_size,opt_size1):
         arrays2 = []
         arrays4 = []
 
-        rgb = cv2.imread(data_folder_rgb + folder_opt + '-' + str(start_opt1) + '.jpg')
+        rgb = cv2.imread(data_folder_rgb + folder_opt + '-' + str(start_opt1/2) + '.jpg')
         if not server:
             rgb = cv2.resize(rgb, (224, 224))
         if rgb is None:
@@ -235,7 +236,7 @@ def stackMultiple(chunk,data_folder_rgb,opt_size,opt_size1):
             stack_opt2.append(nstack2)
 
         # Stack optical flow 1
-        if 3 in opts:
+        if 4 in opts:
             for i in range(start_opt4, start_opt4 + 20):
                 img = cv2.imread(data_folder_opt4 + folder_opt  + '/' +  str(i) + '.jpg', 0)
                 height, width = img.shape
@@ -250,13 +251,13 @@ def stackMultiple(chunk,data_folder_rgb,opt_size,opt_size1):
             
             stack_opt4.append(nstack4)
 
-    returns.append(stack_rgb)
+    returns.append(np.array(stack_rgb))
     if 1 in opts:
-        returns.append(stack_opt1)
+        returns.append(np.array(stack_opt1))
     if 2 in opts:
-        returns.append(stack_opt2)
+        returns.append(np.array(stack_opt2))
     if 4 in opts:
-        returns.append(stack_opt4)
+        returns.append(np.array(stack_opt4))
 
     return returns, labels
 
